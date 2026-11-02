@@ -1,5 +1,15 @@
 # 16 — Keyboard input, hot-plug, and the FLX4 startup thump
 
+Current FLX6 behavior (2026-11-02): normal hot-plug is user-confirmed. New
+connection cleanup releases held controls, stops jog motion, cancels queued
+pad/transport actions and resets packet/button state, including fresh
+subscriptions that reuse an ALSA address. Discovery also runs during traffic.
+This latest held-input cleanup is locally checked, with no later Pi result
+reported. Position queries have bounded retries per subscription, including
+when VU output is disabled. See the [FLX6 inventory](flx6-mapping-audit.md).
+The dated keyboard/FLX4 investigations below retain their original evidence;
+the FLX4 startup-thump observations are not FLX6 measurements.
+
 Five observations the operator made on the unit on **2026-09-26**, and what
 measuring them turned up. Each now has an answer, and for two of them the answer
 was the same defect, found while measuring the others: a key release was being
@@ -584,7 +594,7 @@ The measurements — and the verification of the fixes — were taken with overr
 in `/opt/rblive4/rb.local.conf`, all marked TEMPORARY there and none of them a
 fix. As of 2026-09-27 the file holds:
 
-* `RB_MIDI_MAP=flx4` — **this one is now the default in `rb.conf` and the line is
+* `RB_MIDI_MAP=flx6` — **this one is now the default in `rb.conf` and the line is
   redundant**; it is kept only so the file records what changed and why. It was
   `kbd` for the earlier bring-up, and under the one-map rule that alone is what
   made the FLX4 look dead ([below](#two-selections-not-one)).
@@ -659,7 +669,7 @@ to consume what was arriving.
 
 | Variable | Chooses | Default |
 |---|---|---|
-| `RB_MIDI_MAP` / `MIDI_MAP` | the controller, on the ALSA sequencer: `flx4`, `jp21`, `kbd`, `none` | `flx4` |
+| `RB_MIDI_MAP` / `MIDI_MAP` | the controller, on the ALSA sequencer: `flx6`, `flx4`, `jp21`, `kbd`, `none` | `flx6` |
 | `RB_EVDEV_MAP` / `EVDEV_MAP` | the non-MIDI surface, on `/dev/input/event*`: `kbd`, `none` | `kbd` |
 
 So a controller, a keyboard and a mouse are all live with no configuration, which
